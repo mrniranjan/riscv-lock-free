@@ -1,0 +1,11 @@
+RISCV SimpleStoreWithAddr
+{
+  0:x5=x;
+  x=0;
+}
+
+P0 |
+  sd x5, 1, x
+;
+
+exists (x=1)
