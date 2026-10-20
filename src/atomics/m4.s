@@ -3,7 +3,7 @@
 	# SBI Extension constants
 
 	.equ SBI_CONSOLE_PUTCHAR, 1
-	.equ SBI_EXTG_DBCN, 0x4442434E
+	.equ SBI_EXT_DBCN, 0x4442434E
 	.equ SBI_DBCN_WRITE, 0
 
 	.equ SBI_EXT_HSM, 0x48534D
