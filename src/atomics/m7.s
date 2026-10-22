@@ -56,7 +56,7 @@ hart1_entry:
 loop:
 	lw t3, (t0)
 	beqz t3, loop
-	fence r, rw
+	fence r, r
 	li t0, 0
 
 for_loop:
