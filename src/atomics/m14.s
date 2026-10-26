@@ -41,7 +41,7 @@ check_lock_0:
 	bnez t2, check_lock_0		# we check if the t2 is not zero, if it's zero we wait, another hart may be writing to it
 
 spin_lock_0:				# we do the spin lock
-	lr.w t2, (t0)			# Get the value of lock (t0) in to t2 and set reservation
+	lr.w.aq t2, (t0)		# Get the value of lock (t0) in to t2 and set reservation and also set floor
 	bnez t2, check_lock_0		# if t2 is not zero we loop back to check_lock_0
 	li t3, 1			# if we are here that means we can lock 
 	sc.w t4, t3, (t0)		# set the lock and release the reservation 
@@ -69,10 +69,9 @@ release_lock_0:
 	j park				# sleep
 	
 hart1_entry:
-
 	# initialize
 	la t0, lock_var
-	la t1, counter
+	la t1, payload
 
 	# similar to hart0, we do Test and Test-and-set lock (TTAS)
 check_lock_1:				
@@ -112,14 +111,11 @@ release_lock_1:
 check_before_printing:
 	lw t1, (t0)			# Get the latest value of total_harts
 	bnez t1, check_before_printing	# if it's not zero , which means still there are harts that have not completed
-	xor t2, t1, t1			# xor , this is used to add data dependency 
 
 	# Get the latest 
 	la t0, payload			# Get the latest payload address
-	lw t1, (t0)			# Get the latest payload data
-	add t3, t1, t2			# we are just adding with t3 (zero) from xor operation, this is done so that
-					# hart1 speculatively doesn't try to compute payload before checking all harts have
-					# completed their work. we are using PPO Rule 10 of data dependency
+	add t0, t0, t1			# this is dummy add to add a data dependency t0 = t0 + t1 (t1=0)
+	lw t3, (t0)			# Get the latest payload data
 
 print:
 	li t4, 10			
