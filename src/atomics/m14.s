@@ -37,11 +37,11 @@ hart0_entry: 	# wakeup hart1
 	
 check_lock_0:
 	# we are following Test and Test-and-set lock (TTAS) 
-	lw t2, (t0)			# Get the current value lock_var in to t2 and set reservation 
+	lw t2, (t0)			# Get the current value lock_var in to t2
 	bnez t2, check_lock_0		# we check if the t2 is not zero, if it's zero we wait, another hart may be writing to it
 
 spin_lock_0:				# we do the spin lock
-	lr.w.aq t2, (t0)		# Get the value of lock (t0) in to t2 and set reservation and also set floor
+O	lr.w.aq t2, (t0)		# Get the value of lock (t0) in to t2 and set reservation and also set floor
 	bnez t2, check_lock_0		# if t2 is not zero we loop back to check_lock_0
 	li t3, 1			# if we are here that means we can lock 
 	sc.w t4, t3, (t0)		# set the lock and release the reservation 
